@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD App</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 5px 10px; margin: 2px; cursor: pointer; }
+        .new-btn { background: #4CAF50; color: white; padding: 8px 16px; }
+        .edit-btn { background: #2196F3; color: white; }
+        .delete-btn { background: #f44336; color: white; }
+        .form-container { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .serial-col { width: 50px; text-align: center; }
+        .action-col { width: 150px; }
+        .form-row { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Simple CRUD App</h1>
+    
+    {% if not show_form %}
+        <button class="new-btn" onclick="window.location.href='/?show_form=true'">New Entry</button>
+        <table>
+            <thead>
+                <tr>
+                    <th class="serial-col">S.no</th>
+                    <th>Plant Name</th>
+                    <th>Country</th>
+                    <th>Pincode</th>
+                    <th class="action-col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td class="serial-col">{{ loop.index }}</td>
+                    <td>{{ entry['Plant Name'] }}</td>
+                    <td>{{ entry['Country'] }}</td>
+                    <td>{{ entry['Pincode'] }}</td>
+                    <td>
+                        <button class="edit-btn" onclick="window.location.href='/?show_form=true&id={{ entry.id }}'">Edit</button>
+                        <button class="delete-btn" onclick="if(confirm('Delete this entry?')) window.location.href='/delete/{{ entry.id }}'">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="form-container">
+            <h2>{% if entry %}Edit{% else %}Add New{% endif %} Entry</h2>
+            <form method="POST" action="/">
+                {% if entry %}<input type="hidden" name="id" value="{{ entry.id }}">{% endif %}
+                <div class="form-row">
+                    <label>Plant Name: </label>
+                    <input type="text" name="plant_name" value="{{ entry['Plant Name'] if entry else '' }}" required>
+                </div>
+                <div class="form-row">
+                    <label>Country: </label>
+                    <input type="text" name="country" value="{{ entry['Country'] if entry else '' }}" required>
+                </div>
+                <div class="form-row">
+                    <label>Pincode: </label>
+                    <input type="number" name="pincode" value="{{ entry['Pincode'] if entry else '' }}" required>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button type="submit" class="edit-btn">{% if entry %}Update{% else %}Save{% endif %}</button>
+                    <button type="button" onclick="window.location.href='/'" style="background: #ff9800; color: white;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</body>
+</html>
